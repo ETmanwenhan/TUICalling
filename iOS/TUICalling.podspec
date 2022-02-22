@@ -19,7 +19,9 @@ Pod::Spec.new do |spec|
 
   spec.requires_arc = true
   spec.static_framework = true
-  spec.source = { :git => 'https://github.com/tencentyun/TUICalling.git' }
+  # spec.source = { :git => 'https://github.com/tencentyun/TUICalling.git' }
+  # 使用本地源代码
+  spec.source = { :git => ''}
   spec.pod_target_xcconfig = {
     'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64'
   }
