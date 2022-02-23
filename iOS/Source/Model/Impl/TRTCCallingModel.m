@@ -8,7 +8,7 @@
 #import "TRTCCallingModel.h"
 #import "TUICallingConstants.h"
 
-int SIGNALING_EXTRA_KEY_TIME_OUT = 30;
+int SIGNALING_EXTRA_KEY_TIME_OUT = 60;
 
 @implementation CallModel
 
