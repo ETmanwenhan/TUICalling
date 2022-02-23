@@ -110,6 +110,9 @@ NS_SWIFT_NAME(onCallingCancel(uid:));
 /// 通话结束 | end callback
 -(void)onCallEnd;
 
+/// 离开房间的事件回调
+-(void)onExitRoom:(NSInteger)reason;
+
 @end
 
 NS_ASSUME_NONNULL_END

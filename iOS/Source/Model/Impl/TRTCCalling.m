@@ -360,6 +360,10 @@
 
 - (void)onExitRoom:(NSInteger)reason {
     self.isInRoom = NO;
+    /// 离开房间的事件回调
+    if ([self canDelegateRespondMethod:@selector(onExitRoom:)]) {
+        [self.delegate onExitRoom:reason];
+    }
 }
 
 #pragma mark - TRTCCloudDelegate
