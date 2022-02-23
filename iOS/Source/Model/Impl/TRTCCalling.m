@@ -68,7 +68,10 @@
         self.curLastModel.inviter = [TRTCCallingUtils loginUser];
         self.curLastModel.action = CallAction_Call;
         self.curLastModel.calltype = type;
-        self.curRoomID = [TRTCCallingUtils generateRoomID];
+        // 解决roomId覆盖问题
+        if (self.curRoomID == 0) {
+            self.curRoomID = [TRTCCallingUtils generateRoomID];
+        }
         self.curCallIdDic = [NSMutableDictionary dictionary];
         self.calleeUserIDs = [@[] mutableCopy];
         self.curGroupID = groupID;
