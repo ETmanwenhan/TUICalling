@@ -733,7 +733,7 @@
 
 /// 收到 C2C 自定义（信令）消息
 - (void)onRecvC2CCustomMessage:(NSString *)msgID  sender:(V2TIMUserInfo *)info customData:(NSData *)data {
-    TRTCLog(@"Calling - onRecvC2CCustomMessage inviteID:%@ inviter:%@", msgID, data);
+    //TRTCLog(@"Calling - onRecvC2CCustomMessage inviteID:%@ inviter:%@", msgID, data);
     if (!self.isBeingCalled) return;
     
     NSDictionary *param = [self check:[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]];
