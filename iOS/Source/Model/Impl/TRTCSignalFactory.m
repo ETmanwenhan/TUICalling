@@ -101,7 +101,7 @@ static const NSUInteger SIGNALING_VERSION = 4;                  // 信令版本�
     
     [signalingDictionary setValue:dataDictionary forKey:SIGNALING_EXTRA_KEY_DATA];
     
-    NSLog(@"%@",signalingDictionary);
+    //NSLog(@"%@",signalingDictionary);
     return signalingDictionary;
 }
 
