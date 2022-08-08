@@ -1,13 +1,9 @@
 Pod::Spec.new do |spec|
   spec.name         = 'TUICalling'
-  spec.version      = '9.5'
+  spec.version      = '10.3'
   spec.platform     = :ios
   spec.ios.deployment_target = '9.0'
-  spec.license      = { :type => 'Proprietary',
-      :text => <<-LICENSE
-        copyright 2017 tencent Ltd. All rights reserved.
-        LICENSE
-       }
+  spec.license      = { :type => 'MIT', :file => 'LICENSE' }
   spec.homepage     = 'https://cloud.tencent.com/document/product/647'
   spec.documentation_url = 'https://cloud.tencent.com/document/product/647'
   spec.authors      = 'tencent video cloud'
@@ -31,10 +27,6 @@ Pod::Spec.new do |spec|
 
   spec.subspec 'TRTC' do |trtc|
     trtc.dependency 'TXLiteAVSDK_TRTC'
-    framework_path="../../SDK/TXLiteAVSDK_TRTC.framework"
-    trtc.pod_target_xcconfig={
-        'HEADER_SEARCH_PATHS'=>["$(PODS_TARGET_SRCROOT)/#{framework_path}/Headers"]
-    }
     trtc.source_files = 'Source/*.{h,m,mm}', 'Source/localized/**/*.{h,m,mm}', 'Source/Model/**/*.{h,m,mm}', 'Source/Service/**/*.{h,m,mm}', 'Source/UI/**/*.{h,m,mm}', 'Source/TUICallingKit_TRTC/*.{h,m,mm}'
     trtc.ios.framework = ['AVFoundation', 'Accelerate']
     trtc.library = 'c++', 'resolv'
@@ -45,11 +37,6 @@ Pod::Spec.new do |spec|
  
   spec.subspec 'Enterprise' do |enterprise|
     enterprise.dependency 'TXLiteAVSDK_Enterprise'
-    framework_path="../../SDK/TXLiteAVSDK_Enterprise.framework"
-    enterprise.pod_target_xcconfig={
-        'HEADER_SEARCH_PATHS'=>["$(PODS_TARGET_SRCROOT)/#{framework_path}/Headers"]
-    }
-    enterprise.xcconfig = { 'HEADER_SEARCH_PATHS' => '${SRCROOT}/../SDK/TXLiteAVSDK_Enterprise.framework/Headers/'}
     enterprise.source_files = 'Source/*.{h,m,mm}', 'Source/localized/**/*.{h,m,mm}', 'Source/Model/**/*.{h,m,mm}', 'Source/Service/**/*.{h,m,mm}', 'Source/UI/**/*.{h,m,mm}', 'Source/TUICallingKit_Enterprise/*.{h,m,mm}'
     enterprise.ios.framework = ['AVFoundation', 'Accelerate', 'AssetsLibrary']
     enterprise.library = 'c++', 'resolv', 'sqlite3'
@@ -60,11 +47,6 @@ Pod::Spec.new do |spec|
   
   spec.subspec 'Professional' do |professional|
     professional.dependency 'TXLiteAVSDK_Professional'
-    framework_path="../../SDK/TXLiteAVSDK_Professional.framework"
-    professional.pod_target_xcconfig={
-        'HEADER_SEARCH_PATHS'=>["$(PODS_TARGET_SRCROOT)/#{framework_path}/Headers"]
-    }
-    professional.xcconfig = { 'HEADER_SEARCH_PATHS' => '${SRCROOT}/../SDK/TXLiteAVSDK_Professional.framework/Headers/'}
     professional.source_files = 'Source/*.{h,m,mm}', 'Source/localized/**/*.{h,m,mm}', 'Source/Model/**/*.{h,m,mm}', 'Source/Service/**/*.{h,m,mm}', 'Source/UI/**/*.{h,m,mm}', 'Source/TUICallingKit_Professional/*.{h,m,mm}'
     professional.ios.framework = ['AVFoundation', 'Accelerate', 'AssetsLibrary']
     professional.library = 'c++', 'resolv', 'sqlite3'
@@ -74,4 +56,3 @@ Pod::Spec.new do |spec|
   end
   
 end
-

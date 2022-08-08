@@ -2,6 +2,7 @@ import { EVENT } from './common/constants.js';
 
 // const TAG_NAME = 'TRTCCallingDelegate'
 
+
 class TRTCCallingDelegate {
   constructor(options) {
     this._emitter = options.emitter;
@@ -81,9 +82,10 @@ class TRTCCallingDelegate {
   }
 
   // 抛出用户接听
-  onUserAccept(userID) {
+  onUserAccept(userID, userList) {
     this._emitter.emit(EVENT.USER_ACCEPT, {
       userID,
+      userList,
     });
   }
 
