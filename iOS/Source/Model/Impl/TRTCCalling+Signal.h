@@ -28,6 +28,9 @@
 /// @param leaveUser 离开的房间的用户id
 - (void)preExitRoom:(NSString *)leaveUser;
 
+/// 直接退房
+- (void)exitRoom;
+
 /// 发送 C2C 自定义（信令）消息
 - (void)sendInviteAction:(CallAction)action user:(NSString *)user model:(CallModel *)model;
 
@@ -39,7 +42,7 @@
 /// 邀请人 ID，如果邀请失败，为nil
 @property (nonatomic, copy) NSString *curCallID;
 /// 不存在GroupID的处理
-@property (nonatomic, strong) NSMutableDictionary *curCallIdDic;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, NSString *> *curCallIdDic;
 /// 群邀请的群 ID
 @property (nonatomic, copy) NSString *curGroupID;
 /// 被邀请的所有用户 ID
@@ -66,6 +69,8 @@
 @property (nonatomic, assign) BOOL isFrontCamera;
 /// 通话要计算通话时长,  记录一下
 @property (nonatomic, assign) UInt64 startCallTS;
+/// 多端登录增加字段:用于标记当前是否是自己发给自己的请求(多端触发),以及自己是否处理了该请求.
+@property (nonatomic, assign) BOOL isProcessedBySelf;
 
 @property (nonatomic, strong) CallModel *curLastModel;
 @property (nonatomic, strong) NSString *callID;

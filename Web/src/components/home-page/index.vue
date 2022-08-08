@@ -4,14 +4,15 @@
       class="home-page-header"
     >Welcome {{loginUserInfo && (loginUserInfo.name || loginUserInfo.userId)}}</div>
     <div class="home-page-section-list">
-      <div class="home-page-section" @click="goto('/video-call')">视频通话</div>
-      <div class="home-page-section" @click="goto('/audio-call')">语音通话</div>
+      <div class="home-page-section" @click="goto('/video-call')">Video call</div>
+      <div class="home-page-section" @click="goto('/audio-call')">Audio call</div>
     </div>
   </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
+import {aegisReportEvent} from '../../utils/aegis'
 
 export default {
   name: "HomePage",
@@ -23,9 +24,17 @@ export default {
       enableEditName: true
     };
   },
+  mounted() {
+    aegisReportEvent("login", "login-success");
+  },
   methods: {
     goto: function(path) {
       this.$router.push(path);
+      if (path.indexOf("video") !== -1) {
+          aegisReportEvent("chooseSence", "VideoCall");
+      } else if (path.indexOf("audio") !== -1) {
+          aegisReportEvent("chooseSence", "VoiceCall");
+      }
     }
   }
 };

@@ -1,15 +1,22 @@
 <template>
   <div class="search-user-container" v-if="callStatus !== 'connected'">
     <div class="search-section">
-      <el-input class="inline-input" v-model="searchInput" maxlength="11" placeholder="请输入用户ID"></el-input>
+      <el-input class="inline-input" v-model="searchInput" maxlength="11" placeholder="Enter a user ID"></el-input>
     </div>
 
     <div v-show="callStatus !== 'connected'" class="search-user-list">
       <div v-if="callStatus === 'calling' && isInviter" class="calling-user-footer">
-        <el-button class="user-item-join-btn calling">呼叫中...</el-button>
-        <el-button class="user-item-cancel-join-btn" :disabled="cancel" :loading="cancel" @click="handleCancelCallBtnClick">取消</el-button>
+        <el-button class="user-item-join-btn calling">Calling...</el-button>
+        <el-button 
+          class="user-item-cancel-join-btn" 
+          :disabled="cancel" 
+          :loading="cancel" 
+          @click="handleCancelCallBtnClick">Cancel</el-button>
       </div>
-      <el-button v-else @click="handleCallBtnClick(searchInput)" :disabled="call" class="user-item-join-btn">呼叫</el-button>
+      <el-button v-else 
+        @click="handleCallBtnClick(searchInput)" 
+        :disabled="call" 
+        class="user-item-join-btn">Call</el-button>
     </div>
   </div>
 </template>
@@ -17,6 +24,7 @@
 <script>
 import { mapState } from "vuex";
 import { getSearchHistory } from "../../utils";
+import { aegisReportEvent } from "../../utils/aegis"
 
 export default {
   name: "SearchUser",
@@ -73,17 +81,27 @@ export default {
   methods: {
     handleCallBtnClick: function(param) {
       if (param === this.loginUserInfo.userId) {
-        this.$message("请输入正确用户ID");
+        this.$message("Please don't call yourself!");
         return;
       }
-      this.call = true
+      this.call = false;
       this.callUserId = param;
       this.$emit("callUser", { param });
+      this.handleDiffPenetration();
     },
     handleCancelCallBtnClick: function() {
+      // The user accepted the invitation but failed to enter the room
       // 对方刚接受邀请，但进房未成功
       this.cancel = true
       this.$emit("cancelCallUser");
+    },
+    handleDiffPenetration: function() {
+      const path = this.$route.path;
+      if (path.indexOf("video") !== -1) {
+        aegisReportEvent("videoCall", "videoCall-1v1");
+      } else if (path.indexOf("audio") !== -1) {
+        aegisReportEvent("VoiceCall", "VoiceCall-1v1");
+      }
     }
   }
 };

@@ -16,55 +16,36 @@
 
 /// 记录Calling当前的状态
 @property (nonatomic, assign) TUICallingState curCallingState;
-
 /// 存储用户数据
 @property (nonatomic, strong) NSMutableArray<CallUserModel *> *userList;
-
 /// 组通话视图
 @property (nonatomic, strong) UICollectionView *groupCollectionView;
-
 /// 所有接收者提示文本
 @property (nonatomic, strong) UILabel *calleeTipLabel;
-
 /// 所有接收者视图
 @property (nonatomic, strong) UICollectionView *calleeCollectionView;
-
 /// UICollectionView 代理对象
 @property (nonatomic, strong) TUICallingDelegateManager *delegateManager;
-
 /// 所有接收者视图代理对象
 @property (nonatomic, strong) TUICalleeDelegateManager *calleeDelegateManager;
-
 /// 远程音频用户信息视图
 @property (nonatomic, strong) TUIAudioUserContainerView *userContainerView;
-
 /// 接听控制视图
 @property (nonatomic, strong) TUIInvitedContainerView *invitedContainerView;
-
 /// 通话时间按钮
 @property (nonatomic, strong) UILabel *callingTime;
-
 /// 关闭麦克风按钮
 @property (nonatomic, strong) TUICallingControlButton *muteBtn;
-
 /// 挂断按钮
 @property (nonatomic, strong) TUICallingControlButton *hangupBtn;
-
 /// 免提按钮
 @property (nonatomic, strong) TUICallingControlButton *handsfreeBtn;
-
 /// 关闭摄像头
 @property (nonatomic, strong) TUICallingControlButton *closeCameraBtn;
-
 /// 切换摄像头
 @property (nonatomic, strong) UIButton *switchCameraBtn;
-
-/// 记录本地用户
-@property (nonatomic, strong) CallUserModel *currentUser;
-
 /// 记录发起通话着
 @property (nonatomic, strong) CallUserModel *curSponsor;
-
 // 记录是否为前置相机,麦克风,听筒,摄像头开关
 @property (nonatomic, assign) BOOL isFrontCamera;
 @property (nonatomic, assign) BOOL isMicMute;
@@ -75,11 +56,10 @@
 
 @implementation TUIGroupCallingView
 
-- (instancetype)initWithUser:(CallUserModel *)user isVideo:(BOOL)isVideo isCallee:(BOOL)isCallee {
+- (instancetype)initWithIsVideo:(BOOL)isVideo isCallee:(BOOL)isCallee {
     self = [super initWithFrame:[UIScreen mainScreen].bounds];
     if (self) {
-        self.currentUser = user;
-        self.userList = [NSMutableArray arrayWithObject:user];
+        self.userList = [NSMutableArray array];
         self.isVideo = isVideo;
         self.isCallee = isCallee;
         self.isFrontCamera = YES;
@@ -115,14 +95,14 @@
     [self addSubview:self.handsfreeBtn];
     // 视图约束
     [self.groupCollectionView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self).offset(StatusBar_Height);
+        make.top.equalTo(self).offset(StatusBar_Height + 38);
         make.centerX.equalTo(self);
         make.width.height.mas_equalTo(self.bounds.size.width);
     }];
     [self.callingTime mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(self);
         make.bottom.equalTo(self.hangupBtn.mas_top).offset(-10);
-        make.height.equalTo(@(30));
+        make.height.equalTo(@(20));
     }];
     [self.muteBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.equalTo(self.hangupBtn.mas_left).offset(-5);
@@ -139,6 +119,7 @@
         make.centerY.equalTo(self.hangupBtn);
         make.size.equalTo(@(kControlBtnSize));
     }];
+    [self bringSubviewToFront:self.floatingWindowBtn];
 }
 
 /// 多人通话，主叫方/接听后 UI初始化
@@ -152,14 +133,14 @@
     [self addSubview:self.switchCameraBtn];
     // 视图约束
     [self.groupCollectionView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self).offset(StatusBar_Height);
+        make.top.equalTo(self).offset(StatusBar_Height + 38);
         make.centerX.equalTo(self);
         make.width.height.mas_equalTo(self.bounds.size.width);
     }];
     [self.callingTime mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(self);
-        make.bottom.equalTo(self.handsfreeBtn.mas_top).offset(-10);
-        make.height.equalTo(@(30));
+        make.bottom.equalTo(self.handsfreeBtn.mas_top).offset(5);
+        make.height.equalTo(@(20));
     }];
     [self.muteBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.equalTo(self.handsfreeBtn.mas_left);
@@ -186,6 +167,7 @@
         make.left.equalTo(self.hangupBtn.mas_right).offset(20);
         make.size.equalTo(@(CGSizeMake(36, 36)));
     }];
+    [self bringSubviewToFront:self.floatingWindowBtn];
 }
 
 /// 多人通话，被呼叫方UI初始化
@@ -218,6 +200,7 @@
         make.height.equalTo(@(94));
         make.bottom.equalTo(self).offset(-Bottom_SafeHeight - 20);
     }];
+    [self bringSubviewToFront:self.floatingWindowBtn];
 }
 
 - (void)setCurCallingState:(TUICallingState)curCallingState {
@@ -227,16 +210,16 @@
     switch (curCallingState) {
         case TUICallingStateOnInvitee: {
             [self initUIForAudioCallee];
-            NSString *waitingText = CallingLocalize(@"Demo.TRTC.calling.invitetoaudiocall");
+            NSString *waitingText = TUICallingLocalize(@"Demo.TRTC.calling.invitetoaudiocall");
             if (self.isVideo) {
-                waitingText = CallingLocalize(@"Demo.TRTC.calling.invitetovideocall");
+                waitingText = TUICallingLocalize(@"Demo.TRTC.calling.invitetovideocall");
             }
             [self.userContainerView configUserInfoViewWith:self.curSponsor showWaitingText:waitingText];
         } break;
         case TUICallingStateDailing: {
             [self initUIForCaller];
             self.callingTime.hidden = YES;
-            [self.userContainerView configUserInfoViewWith:self.curSponsor showWaitingText:CallingLocalize(@"Demo.TRTC.calling.waitaccept")];
+            [self.userContainerView configUserInfoViewWith:self.curSponsor showWaitingText:TUICallingLocalize(@"Demo.TRTC.calling.waitaccept")];
         } break;
         case TUICallingStateCalling: {
             [self initUIForCaller];
@@ -246,6 +229,10 @@
         } break;
         default:
             break;
+    }
+    
+    if ([TUICallingFloatingWindowManager shareInstance].isFloating) {
+        [[TUICallingFloatingWindowManager shareInstance] updateMicroWindowText:@"" callingState:self.curCallingState];
     }
 }
 
@@ -267,7 +254,7 @@
     if (self.isCallee && (self.curCallingState == TUICallingStateOnInvitee)) {
         NSMutableArray *userArray = [NSMutableArray array];
         [self.userList enumerateObjectsUsingBlock:^(CallUserModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            if (obj.userId != self.currentUser.userId) {
+            if (![obj.userId isEqualToString:self.currentUser.userId]) {
                 [userArray addObject:obj];
             }
         }];
@@ -334,7 +321,7 @@
     if (!user) return -1;
     __block NSInteger index = -1;
     [self.userList enumerateObjectsUsingBlock:^(CallUserModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        if (obj.userId == user.userId) {
+        if ([obj.userId isEqualToString:user.userId]) {
             index = idx;
             *stop = YES;
         }
@@ -358,6 +345,10 @@
 - (void)setCallingTimeStr:(NSString *)timeStr {
     if (timeStr && timeStr.length > 0) {
         self.callingTime.text = timeStr;
+        
+        if ([TUICallingFloatingWindowManager shareInstance].isFloating) {
+            [[TUICallingFloatingWindowManager shareInstance] updateMicroWindowText:timeStr callingState:self.curCallingState];
+        }
     }
 }
 
@@ -453,7 +444,19 @@
     });
 }
 
+- (void)floatingWindowTouchEvent:(UIButton *)sender {
+    [self showMicroFloatingWindow:self.curCallingState];
+}
+
 #pragma mark - Lazy
+
+- (void)setCurrentUser:(CallUserModel *)currentUser {
+    [super setCurrentUser:currentUser];
+    
+    if (currentUser) {
+        [self.userList insertObject:currentUser atIndex:0];
+    }
+}
 
 - (TUIAudioUserContainerView *)userContainerView {
     if (!_userContainerView) {
@@ -479,7 +482,7 @@
 - (TUICallingControlButton *)muteBtn {
     if (!_muteBtn) {
         __weak typeof(self) weakSelf = self;
-        _muteBtn = [TUICallingControlButton createViewWithFrame:CGRectZero titleText:CallingLocalize(@"Demo.TRTC.Calling.mic") buttonAction:^(UIButton * _Nonnull sender) {
+        _muteBtn = [TUICallingControlButton createViewWithFrame:CGRectZero titleText:TUICallingLocalize(@"Demo.TRTC.Calling.mic") buttonAction:^(UIButton * _Nonnull sender) {
             [weakSelf muteTouchEvent:sender];
         } imageSize:kBtnSmallSize];
         [_muteBtn configBackgroundImage:[TUICommonUtil getBundleImageWithName:@"ic_mute"]];
@@ -491,7 +494,7 @@
 - (TUICallingControlButton *)handsfreeBtn {
     if (!_handsfreeBtn) {
         __weak typeof(self) weakSelf = self;
-        _handsfreeBtn = [TUICallingControlButton createViewWithFrame:CGRectZero titleText:CallingLocalize(@"Demo.TRTC.Calling.speaker") buttonAction:^(UIButton * _Nonnull sender) {
+        _handsfreeBtn = [TUICallingControlButton createViewWithFrame:CGRectZero titleText:TUICallingLocalize(@"Demo.TRTC.Calling.speaker") buttonAction:^(UIButton * _Nonnull sender) {
             [weakSelf hangsfreeTouchEvent:sender];
         } imageSize:kBtnSmallSize];
         [_handsfreeBtn configBackgroundImage:[TUICommonUtil getBundleImageWithName:@"ic_handsfree_on"]];
@@ -503,7 +506,7 @@
 - (TUICallingControlButton *)closeCameraBtn {
     if (!_closeCameraBtn) {
         __weak typeof(self) weakSelf = self;
-        _closeCameraBtn = [TUICallingControlButton createViewWithFrame:CGRectZero titleText:CallingLocalize(@"Demo.TRTC.Calling.camera") buttonAction:^(UIButton * _Nonnull sender) {
+        _closeCameraBtn = [TUICallingControlButton createViewWithFrame:CGRectZero titleText:TUICallingLocalize(@"Demo.TRTC.Calling.camera") buttonAction:^(UIButton * _Nonnull sender) {
             [weakSelf closeCameraTouchEvent:sender];
         } imageSize:kBtnSmallSize];
         [_closeCameraBtn configBackgroundImage:[TUICommonUtil getBundleImageWithName:@"camera_on"]];
@@ -516,7 +519,7 @@
     if (!_hangupBtn) {
         __weak typeof(self) weakSelf = self;
         
-        _hangupBtn = [TUICallingControlButton createViewWithFrame:CGRectZero titleText:CallingLocalize(@"Demo.TRTC.Calling.hangup") buttonAction:^(UIButton * _Nonnull sender) {
+        _hangupBtn = [TUICallingControlButton createViewWithFrame:CGRectZero titleText:TUICallingLocalize(@"Demo.TRTC.Calling.hangup") buttonAction:^(UIButton * _Nonnull sender) {
             [weakSelf hangupTouchEvent:sender];
         } imageSize:kBtnLargeSize];
         [_hangupBtn configBackgroundImage:[TUICommonUtil getBundleImageWithName:@"ic_hangup"]];
@@ -578,7 +581,7 @@
         _calleeTipLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         _calleeTipLabel.font = [UIFont boldSystemFontOfSize:14.0f];
         [_calleeTipLabel setTextColor:[UIColor t_colorWithHexString:@"#999999"]];
-        [_calleeTipLabel setText:CallingLocalize(@"Demo.TRTC.Calling.calleeTip")];
+        [_calleeTipLabel setText:TUICallingLocalize(@"Demo.TRTC.Calling.calleeTip")];
         [_calleeTipLabel setTextAlignment:NSTextAlignmentCenter];
     }
     return _calleeTipLabel;

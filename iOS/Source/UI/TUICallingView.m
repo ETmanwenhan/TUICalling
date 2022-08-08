@@ -9,65 +9,47 @@
 #import "TUIAudioUserContainerView.h"
 #import "TUIVideoUserContainerView.h"
 #import <TUICore/UIView+TUIToast.h>
-#import "TUIDefine.h"
 
 static CGFloat const kSmallVideoViewWidth = 100.0f;
+#define kCallingViewMicroRenderFrame CGRectMake(self.frame.size.width - kSmallVideoViewWidth - 18, StatusBar_Height + 20, kSmallVideoViewWidth, kSmallVideoViewWidth / 9.0 * 16.0)
 
-@interface TUICallingView()
+@interface TUICallingView()<TUICallingVideoRenderViewDelegate>
 
 /// 记录Calling当前的状态
 @property (nonatomic, assign) TUICallingState curCallingState;
-
 /// 记录远程通话人信息
 @property (nonatomic, strong) CallUserModel *remoteSponsor;
-
 /// 通话时间按钮
 @property (nonatomic, strong) UILabel *callingTime;
-
 /// 关闭麦克风按钮
 @property (nonatomic, strong) TUICallingControlButton *muteBtn;
-
 /// 挂断按钮
 @property (nonatomic, strong) TUICallingControlButton *hangupBtn;
-
 /// 免提按钮
 @property (nonatomic, strong) TUICallingControlButton *handsfreeBtn;
-
 /// 接听控制视图
 @property (nonatomic, strong) TUIInvitedContainerView *invitedContainerView;
-
 /// 远程音频用户信息视图
 @property (nonatomic, strong) TUIAudioUserContainerView *audioUserContainerView;
-
 /** 视频相关处理 */
-
 /// 远程视频用户信息视图
 @property (nonatomic, strong) TUIVideoUserContainerView *videoUserContainerView;
-
 /// 视频通话 - 视频的渲染视图 - 本地视图
 @property (nonatomic, strong) TUICallingVideoRenderView *localPreView;
-
 /// 视频通话 - 视频的渲染视图 - 远程视图
 @property (nonatomic, strong) TUICallingVideoRenderView *remotePreView;
-
 /// 关闭摄像头
 @property (nonatomic, strong) TUICallingControlButton *closeCameraBtn;
-
 /// 视频通话 - 用于切换摄像头的按钮
 @property (nonatomic, strong) UIButton *switchCameraBtn;
-
 /// 视频通话 - 用于切换到语音按钮
 @property (nonatomic, strong) TUICallingControlButton *switchToAudioBtn;
-
 /// 记录是本地预览大图
 @property (nonatomic, assign) BOOL isLocalPreViewLarge;
-
 /// 记录是否为前置相机
 @property (nonatomic, assign) BOOL isFrontCamera;
-
 /// 标记是否需要清除页面
 @property (nonatomic, assign) BOOL isClearFlag;
-
 /// 麦克风 / 切换音频和听筒状态记录
 @property (nonatomic, assign) BOOL isMicMute;
 @property (nonatomic, assign) BOOL isHandsFreeOn;
@@ -143,6 +125,7 @@ static CGFloat const kSmallVideoViewWidth = 100.0f;
         make.bottom.equalTo(self.hangupBtn);
         make.size.equalTo(@(kControlBtnSize));
     }];
+    [self bringFloatingWindowWhiteButtonToFront:NO];
     self.callingTime.textColor = [UIColor t_colorWithHexString:@"#333333"];
     [self.muteBtn configTitleColor:[UIColor t_colorWithHexString:@"#666666"]];
     [self.hangupBtn configTitleColor:[UIColor t_colorWithHexString:@"#666666"]];
@@ -165,6 +148,7 @@ static CGFloat const kSmallVideoViewWidth = 100.0f;
         make.height.equalTo(@(94));
         make.bottom.equalTo(self).offset(-Bottom_SafeHeight - 20);
     }];
+    [self bringFloatingWindowWhiteButtonToFront:NO];
     [self.invitedContainerView configTitleColor:[UIColor t_colorWithHexString:@"#666666"]];
 }
 
@@ -177,11 +161,6 @@ static CGFloat const kSmallVideoViewWidth = 100.0f;
     [self addSubview:self.switchToAudioBtn];
     [self addSubview:self.hangupBtn];
     // 视图约束
-    [self.switchCameraBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self).offset(StatusBar_Height + 20);
-        make.left.equalTo(self).offset(20);
-        make.width.height.equalTo(@(32));
-    }];
     [self.videoUserContainerView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self).offset(StatusBar_Height + 20);
         make.left.equalTo(self).offset(20);
@@ -197,6 +176,12 @@ static CGFloat const kSmallVideoViewWidth = 100.0f;
         make.bottom.equalTo(self.mas_top).offset(self.frame.size.height - Bottom_SafeHeight - 20);
         make.size.equalTo(@(kControlBtnSize));
     }];
+    [self.switchCameraBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(self.hangupBtn);
+        make.left.equalTo(self.hangupBtn.mas_right).offset(20);
+        make.size.equalTo(@(CGSizeMake(36, 36)));
+    }];
+    [self bringFloatingWindowWhiteButtonToFront:YES];
     self.localPreView.hidden = NO;
     [self.hangupBtn configTitleColor:[UIColor t_colorWithHexString:@"#FFFFFF"]];
 }
@@ -233,7 +218,7 @@ static CGFloat const kSmallVideoViewWidth = 100.0f;
         make.centerY.equalTo(self.handsfreeBtn);
         make.size.equalTo(@(kControlBtnSize));
     }];
-    
+    [self bringFloatingWindowWhiteButtonToFront:YES];
     [self.handsfreeBtn configBackgroundImage:[TUICommonUtil getBundleImageWithName:@"ic_handsfree_on"]];
     self.callingTime.textColor = [UIColor t_colorWithHexString:@"#FFFFFF"];
     [self.muteBtn configTitleColor:[UIColor t_colorWithHexString:@"#FFFFFF"]];
@@ -264,6 +249,7 @@ static CGFloat const kSmallVideoViewWidth = 100.0f;
         make.bottom.equalTo(self.invitedContainerView.mas_top).offset(-10);
         make.size.equalTo(@(CGSizeMake(200, 46)));
     }];
+    [self bringFloatingWindowWhiteButtonToFront:YES];
     self.localPreView.hidden = NO;
     [self.invitedContainerView configTitleColor:[UIColor t_colorWithHexString:@"#FFFFFF"]];
 }
@@ -274,12 +260,14 @@ static CGFloat const kSmallVideoViewWidth = 100.0f;
     self.isVideo = NO;
     self.isClearFlag = YES;
     self.backgroundColor = [UIColor t_colorWithHexString:@"#F4F5F9"];
-    
     [[TRTCCalling shareInstance] closeCamara];
+    
     if (self.isHandsFreeOn) {
         [self hangsfreeTouchEvent:nil];
     }
+    
     [self setCurCallingState:self.curCallingState];
+    [[TUICallingFloatingWindowManager shareInstance] switchToAudioMicroWindowWith:self.curCallingState];
 }
 
 - (void)setCurCallingState:(TUICallingState)curCallingState {
@@ -296,10 +284,10 @@ static CGFloat const kSmallVideoViewWidth = 100.0f;
             
             if (self.isVideo) {
                 [self initUIForVideoCallee];
-                [self.videoUserContainerView configUserInfoViewWith:self.remoteSponsor showWaitingText:CallingLocalize(@"Demo.TRTC.calling.invitetovideocall")];
+                [self.videoUserContainerView configUserInfoViewWith:self.remoteSponsor showWaitingText:TUICallingLocalize(@"Demo.TRTC.calling.invitetovideocall")];
             } else {
                 [self initUIForAudioCallee];
-                [self.audioUserContainerView configUserInfoViewWith:self.remoteSponsor showWaitingText:CallingLocalize(@"Demo.TRTC.calling.invitetoaudiocall")];
+                [self.audioUserContainerView configUserInfoViewWith:self.remoteSponsor showWaitingText:TUICallingLocalize(@"Demo.TRTC.calling.invitetoaudiocall")];
             }
         } break;
         case TUICallingStateDailing: {
@@ -307,10 +295,10 @@ static CGFloat const kSmallVideoViewWidth = 100.0f;
             
             if (self.isVideo) {
                 [self initUIForVideoCaller];
-                [self.videoUserContainerView configUserInfoViewWith:self.remoteSponsor showWaitingText:CallingLocalize(@"Demo.TRTC.Calling.waitaccept")];
+                [self.videoUserContainerView configUserInfoViewWith:self.remoteSponsor showWaitingText:TUICallingLocalize(@"Demo.TRTC.Calling.waitaccept")];
             } else {
                 [self initUIForAudioCaller];
-                [self.audioUserContainerView configUserInfoViewWith:self.remoteSponsor showWaitingText:CallingLocalize(@"Demo.TRTC.Calling.waitaccept")];
+                [self.audioUserContainerView configUserInfoViewWith:self.remoteSponsor showWaitingText:TUICallingLocalize(@"Demo.TRTC.Calling.waitaccept")];
             }
         } break;
         case TUICallingStateCalling: {
@@ -393,7 +381,7 @@ static CGFloat const kSmallVideoViewWidth = 100.0f;
     
     if (!self.isCallee && self.curCallingState != TUICallingStateCalling) {
         // 等待对方接听
-        showText = CallingLocalize(@"Demo.TRTC.Calling.waitaccept");
+        showText = TUICallingLocalize(@"Demo.TRTC.Calling.waitaccept");
     }
     
     if (self.curCallingState == TUICallingStateCalling) {
@@ -407,16 +395,10 @@ static CGFloat const kSmallVideoViewWidth = 100.0f;
 }
 
 - (void)setRemotePreViewWith:(CallUserModel *)user{
-    if (user.userId != [[V2TIMManager sharedInstance] getLoginUser]) {
+    if (![user.userId isEqualToString:[[V2TIMManager sharedInstance] getLoginUser]]) {
         self.remotePreView.hidden = NO;
         [self.remotePreView configViewWithUserModel:user];
         [[TRTCCalling shareInstance] startRemoteView:user.userId view:self.remotePreView];
-        
-        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
-        UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
-        [self.remotePreView addGestureRecognizer:tap];
-        [pan requireGestureRecognizerToFail:tap];
-        [self.remotePreView addGestureRecognizer:pan];
     }
 }
 
@@ -428,22 +410,22 @@ static CGFloat const kSmallVideoViewWidth = 100.0f;
 - (void)updateUser:(CallUserModel *)user animated:(BOOL)animated {
     self.remotePreView.hidden = !user.isVideoAvaliable;
     
-    if (self.remoteSponsor.userId == user.userId) {
+    if ([self.remoteSponsor.userId isEqualToString:user.userId]) {
         self.remoteSponsor = user;
     }
 }
 
 - (void)updateUserVolume:(CallUserModel *)user {
-    if (self.remoteSponsor.userId == user.userId) {
+    if ([self.remoteSponsor.userId isEqualToString:user.userId]) {
         [self.remotePreView configViewWithUserModel:user];
     }
 }
 
 - (CallUserModel *)getUserById:(NSString *)userId {
-    if (self.remoteSponsor.userId == userId) {
+    if ([self.remoteSponsor.userId isEqualToString:userId]) {
         return self.remoteSponsor;
     }
-    return Nil;
+    return nil;
 }
 
 - (void)acceptCalling {
@@ -459,6 +441,72 @@ static CGFloat const kSmallVideoViewWidth = 100.0f;
 - (void)setCallingTimeStr:(NSString *)timeStr {
     if (timeStr && timeStr.length > 0) {
         self.callingTime.text = timeStr;
+        if (self.isVideo) return;
+        [[TUICallingFloatingWindowManager shareInstance] updateMicroWindowText:timeStr callingState:self.curCallingState];
+    }
+}
+
+#pragma mark - TUICallingFloatingWindowDelegate
+
+- (void)floatingWindowDidClickView {
+    if (!self.isVideo) return;
+    
+    if (self.isLocalPreViewLarge) {
+        self.remotePreView.userInteractionEnabled = YES;
+        self.remotePreView.frame = kCallingViewMicroRenderFrame;
+        self.localPreView.frame = [UIScreen mainScreen].bounds;
+        [self.localPreView removeFromSuperview];
+        [self.remotePreView removeFromSuperview];
+        [self insertSubview:self.localPreView atIndex:0];
+        [self insertSubview:self.remotePreView aboveSubview:self.localPreView];
+    } else {
+        self.localPreView.userInteractionEnabled = YES;
+        self.remotePreView.frame = [UIScreen mainScreen].bounds;
+        self.localPreView.frame = kCallingViewMicroRenderFrame ;
+        [self.remotePreView removeFromSuperview];
+        [self.localPreView removeFromSuperview];
+        [self insertSubview:self.remotePreView atIndex:0];
+        [self insertSubview:self.localPreView aboveSubview:self.remotePreView];
+    }
+}
+
+#pragma mark - TUICallingVideoRenderViewDelegete
+
+- (void)tapGestureAction:(UITapGestureRecognizer *)tapGesture {
+    if (tapGesture.view.frame.size.width == kSmallVideoViewWidth) {
+        [self switchPreView];
+    }
+}
+
+- (void)panGestureAction:(UIPanGestureRecognizer *)panGesture {
+    if (!(panGesture.view && panGesture.view.superview && [panGesture.view.superview isKindOfClass:[TUICallingVideoRenderView class]])) {
+        return;
+    }
+    
+    UIView *smallView = panGesture.view.superview;
+    
+    if (smallView.frame.size.width != kSmallVideoViewWidth) {
+        return;
+    }
+    
+    if (panGesture.state == UIGestureRecognizerStateChanged) {
+        CGPoint translation = [panGesture translationInView:self];
+        CGFloat newCenterX = translation.x + (smallView.center.x);
+        CGFloat newCenterY = translation.y + (smallView.center.y);
+        
+        if ((newCenterX < (smallView.bounds.size.width / 2.0)) || (newCenterX > self.bounds.size.width - (smallView.bounds.size.width) / 2.0)) {
+            return;
+        }
+        
+        if ((newCenterY < (smallView.bounds.size.height) / 2.0) ||
+            (newCenterY > self.bounds.size.height - (smallView.bounds.size.height) / 2.0))  {
+            return;
+        }
+        
+        [UIView animateWithDuration:0.1 animations:^{
+            smallView.center = CGPointMake(newCenterX, newCenterY);
+        }];
+        [panGesture setTranslation:CGPointZero inView:self];
     }
 }
 
@@ -518,6 +566,24 @@ static CGFloat const kSmallVideoViewWidth = 100.0f;
     }
 }
 
+- (void)floatingWindowTouchEvent:(UIButton *)sender {
+    TUICallingVideoRenderView *renderView = nil;
+    
+    if (self.isVideo) {
+        if ((self.curCallingState == TUICallingStateCalling) && self.remotePreView) {
+            renderView = self.remotePreView;
+        } else {
+            renderView = self.localPreView;
+        }
+    }
+    
+    __weak typeof(self) weakSelf = self;
+    [self showMicroFloatingWindowWithVideoRenderView:renderView callingState:self.curCallingState completion:^(BOOL finished) {
+        weakSelf.localPreView.userInteractionEnabled = NO;
+        weakSelf.remotePreView.userInteractionEnabled = NO;
+    }];
+}
+
 #pragma mark - Private
 
 - (void)switchTo2UserPreView {
@@ -525,30 +591,27 @@ static CGFloat const kSmallVideoViewWidth = 100.0f;
     
     [self.localPreView setUserInteractionEnabled:YES];
     [[self.localPreView.subviews firstObject] setUserInteractionEnabled: NO];
-    
     [UIView animateWithDuration:0.3 animations:^{
-        self.localPreView.frame = CGRectMake(self.frame.size.width - kSmallVideoViewWidth - 18, StatusBar_Height + 20, kSmallVideoViewWidth, kSmallVideoViewWidth / 9.0 * 16.0);
-        
+        self.localPreView.frame = kCallingViewMicroRenderFrame;
         self.remotePreView.frame = self.frame;
     } completion:^(BOOL finished) {
         [self.remotePreView removeFromSuperview];
         [self insertSubview:self.remotePreView belowSubview:self.localPreView];
         self.isLocalPreViewLarge = NO;
+        [[TUICallingFloatingWindowManager shareInstance] updateMicroWindowRenderView:self.remotePreView];
     }];
 }
 
 - (void)switchPreView {
-    if (!self.remotePreView) {
-        return;
-    }
-    
+    if (!self.remotePreView) return;
     TUICallingVideoRenderView *remoteView = self.remotePreView;
     
     if (_isLocalPreViewLarge) {
+        // 本地视图为大图
         remoteView.hidden = NO;
         [UIView animateWithDuration:0.3 animations:^{
             remoteView.frame = self.frame;
-            self.localPreView.frame = CGRectMake(self.frame.size.width - kSmallVideoViewWidth - 18, StatusBar_Height + 20, kSmallVideoViewWidth, kSmallVideoViewWidth / 9.0 * 16.0);
+            self.localPreView.frame = kCallingViewMicroRenderFrame;
         } completion:^(BOOL finished) {
             [remoteView removeFromSuperview];
             [self insertSubview:remoteView belowSubview:self.localPreView];
@@ -561,14 +624,14 @@ static CGFloat const kSmallVideoViewWidth = 100.0f;
             }
         }];
     } else {
+        // 本地视图为小图的处理方式
         self.localPreView.hidden = NO;
         [UIView animateWithDuration:0.3 animations:^{
             self.localPreView.frame = self.frame;
-            remoteView.frame = CGRectMake(self.frame.size.width - kSmallVideoViewWidth - 18, StatusBar_Height + 20, kSmallVideoViewWidth, kSmallVideoViewWidth / 9.0 * 16.0);
+            remoteView.frame = kCallingViewMicroRenderFrame;
         } completion:^(BOOL finished) {
             [self.localPreView removeFromSuperview];
             [self insertSubview:self.localPreView belowSubview:remoteView];
-            self.remotePreView = remoteView;
             
             if (self.localPreView.isHidden || remoteView.isHidden) {
                 [self.localPreView setUserInteractionEnabled:NO];
@@ -582,41 +645,10 @@ static CGFloat const kSmallVideoViewWidth = 100.0f;
     self.isLocalPreViewLarge = !_isLocalPreViewLarge;
 }
 
-- (void)handleTapGesture:(UITapGestureRecognizer *)tapGesture {
-    if ([tapGesture view].frame.size.width == kSmallVideoViewWidth) {
-        [self switchPreView];
-    }
-}
-
-- (void)handlePanGesture:(UIPanGestureRecognizer *)panGesture {
-    if (!panGesture || !panGesture.view) {
-        return;
-    }
-    
-    UIView *smallView = panGesture.view;
-    
-    if (smallView.frame.size.width == kSmallVideoViewWidth) {
-        if (panGesture.state == UIGestureRecognizerStateChanged) {
-            CGPoint translation = [panGesture translationInView:self];
-            CGFloat newCenterX = translation.x + (smallView.center.x);
-            CGFloat newCenterY = translation.y + (smallView.center.y);
-            
-            if ((newCenterX < (smallView.bounds.size.width / 2.0)) || (newCenterX > self.bounds.size.width - (smallView.bounds.size.width) / 2)) {
-                return;
-            }
-            
-            if ((newCenterY < (smallView.bounds.size.height) / 2) ||
-                (newCenterY > self.bounds.size.height - (smallView.bounds.size.height) / 2))  {
-                return;
-            }
-            
-            [UIView animateWithDuration:0.1 animations:^{
-                smallView.center = CGPointMake(newCenterX, newCenterY);
-            }];
-            
-            [panGesture setTranslation:CGPointZero inView:self];
-        }
-    }
+- (void)bringFloatingWindowWhiteButtonToFront:(BOOL)isWhiteIcon {
+    [self bringSubviewToFront:self.floatingWindowBtn];
+    [self.floatingWindowBtn setBackgroundImage:[TUICommonUtil getBundleImageWithName:isWhiteIcon? @"ic_min_window_white": @"ic_min_window_dark"]
+                                      forState:UIControlStateNormal];
 }
 
 #pragma mark - Lazy
@@ -643,7 +675,7 @@ static CGFloat const kSmallVideoViewWidth = 100.0f;
 - (TUICallingControlButton *)muteBtn {
     if (!_muteBtn) {
         __weak typeof(self) weakSelf = self;
-        _muteBtn = [TUICallingControlButton createViewWithFrame:CGRectZero titleText:CallingLocalize(@"Demo.TRTC.Calling.mic") buttonAction:^(UIButton * _Nonnull sender) {
+        _muteBtn = [TUICallingControlButton createViewWithFrame:CGRectZero titleText:TUICallingLocalize(@"Demo.TRTC.Calling.mic") buttonAction:^(UIButton * _Nonnull sender) {
             [weakSelf muteTouchEvent:sender];
         } imageSize:kBtnSmallSize];
         [_muteBtn configBackgroundImage:[TUICommonUtil getBundleImageWithName:@"ic_mute"]];
@@ -654,7 +686,7 @@ static CGFloat const kSmallVideoViewWidth = 100.0f;
 - (TUICallingControlButton *)hangupBtn {
     if (!_hangupBtn) {
         __weak typeof(self) weakSelf = self;
-        _hangupBtn = [TUICallingControlButton createViewWithFrame:CGRectZero titleText:CallingLocalize(@"Demo.TRTC.Calling.hangup") buttonAction:^(UIButton * _Nonnull sender) {
+        _hangupBtn = [TUICallingControlButton createViewWithFrame:CGRectZero titleText:TUICallingLocalize(@"Demo.TRTC.Calling.hangup") buttonAction:^(UIButton * _Nonnull sender) {
             [weakSelf hangupTouchEvent:sender];
         } imageSize:kBtnLargeSize];
         [_hangupBtn configBackgroundImage:[TUICommonUtil getBundleImageWithName:@"ic_hangup"]];
@@ -665,7 +697,7 @@ static CGFloat const kSmallVideoViewWidth = 100.0f;
 - (TUICallingControlButton *)handsfreeBtn {
     if (!_handsfreeBtn) {
         __weak typeof(self) weakSelf = self;
-        _handsfreeBtn = [TUICallingControlButton createViewWithFrame:CGRectZero titleText:CallingLocalize(@"Demo.TRTC.Calling.speaker") buttonAction:^(UIButton * _Nonnull sender) {
+        _handsfreeBtn = [TUICallingControlButton createViewWithFrame:CGRectZero titleText:TUICallingLocalize(@"Demo.TRTC.Calling.speaker") buttonAction:^(UIButton * _Nonnull sender) {
             [weakSelf hangsfreeTouchEvent:sender];
         } imageSize:kBtnSmallSize];
         [_handsfreeBtn configBackgroundImage:[TUICommonUtil getBundleImageWithName:@"ic_handsfree"]];
@@ -688,12 +720,8 @@ static CGFloat const kSmallVideoViewWidth = 100.0f;
         _localPreView = [[TUICallingVideoRenderView alloc] initWithFrame:self.bounds];
         _localPreView.backgroundColor = [UIColor t_colorWithHexString:@"#242424"];
         _localPreView.frame = self.bounds;
+        _localPreView.delegate = self;
         [_localPreView setUserInteractionEnabled:NO];
-        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
-        UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
-        [_localPreView addGestureRecognizer:tap];
-        [pan requireGestureRecognizerToFail:tap];
-        [_localPreView addGestureRecognizer:pan];
     }
     return _localPreView;
 }
@@ -703,6 +731,7 @@ static CGFloat const kSmallVideoViewWidth = 100.0f;
         _remotePreView = [[TUICallingVideoRenderView alloc] initWithFrame:CGRectMake(self.bounds.size.width - 120, 74 + 20, 100, 216)];
         _remotePreView.backgroundColor = [UIColor t_colorWithHexString:@"#242424"];
         _remotePreView.hidden = YES;
+        _remotePreView.delegate = self;
     }
     return _remotePreView;
 }
@@ -719,7 +748,7 @@ static CGFloat const kSmallVideoViewWidth = 100.0f;
 - (TUICallingControlButton *)switchToAudioBtn {
     if (!_switchToAudioBtn) {
         __weak typeof(self) weakSelf = self;
-        _switchToAudioBtn = [TUICallingControlButton createViewWithFrame:CGRectZero titleText:CallingLocalize(@"Demo.TRTC.Calling.switchtoaudio") buttonAction:^(UIButton * _Nonnull sender) {
+        _switchToAudioBtn = [TUICallingControlButton createViewWithFrame:CGRectZero titleText:TUICallingLocalize(@"Demo.TRTC.Calling.switchtoaudio") buttonAction:^(UIButton * _Nonnull sender) {
             [weakSelf switchToAudioTouchEvent:sender];
         } imageSize:CGSizeMake(28, 18)];
         [_switchToAudioBtn configTitleColor:[UIColor t_colorWithHexString:@"#FFFFFF"]];
@@ -738,7 +767,7 @@ static CGFloat const kSmallVideoViewWidth = 100.0f;
 - (TUICallingControlButton *)closeCameraBtn {
     if (!_closeCameraBtn) {
         __weak typeof(self) weakSelf = self;
-        _closeCameraBtn = [TUICallingControlButton createViewWithFrame:CGRectZero titleText:CallingLocalize(@"Demo.TRTC.Calling.camera") buttonAction:^(UIButton * _Nonnull sender) {
+        _closeCameraBtn = [TUICallingControlButton createViewWithFrame:CGRectZero titleText:TUICallingLocalize(@"Demo.TRTC.Calling.camera") buttonAction:^(UIButton * _Nonnull sender) {
             [weakSelf closeCameraTouchEvent:sender];
         } imageSize:kBtnSmallSize];
         [_closeCameraBtn configTitleColor:[UIColor t_colorWithHexString:@"#FFFFFF"]];

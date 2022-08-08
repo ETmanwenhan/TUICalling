@@ -1,5 +1,63 @@
 ## 发布日志
 
+### Version 10.4 @ 2022.07.20
+
+#### 功能修复：
+- Android：修复单人通话挂断时，没有发出hangup信令问题
+- Android：修复悬浮窗空指针异常
+
+#### 功能优化：
+- Android：更新TUILogin的login/logout接口
+- iOS：更新TUILogin的login/logout接口
+
+### Version 10.3 @ 2022.07.11
+
+#### 功能优化
+- Android：替换原离线推送方式`TPNS`为[`TUIOfflinePush`](https://cloud.tencent.com/document/product/269/44516)
+
+### Version 10.2 @ 2022.06.21
+
+#### 功能修复
+- Android：未接听状态退到后台，再回到前台时，通话异常挂断
+
+#### 功能优化
+- Android：权限申请及弹窗显示更规范化
+
+### Version 9.9 @ 2022.05.05
+  
+#### 问题修复
+- Android：修复被叫端接听后，被叫端无法显示主叫端视频画面问题。
+  
+#### 功能优化
+- Android：去除tuicore源码依赖，tuicore通过aar方式引入，不再提供源码目录。
+- Android：优化保活机制：通话开始时开启保活，通话结束时关闭保活。
+- Android：扬声器和麦克风切换权限`MODIFY_AUDIO_SETTINGS`移植到组件tuicalling下。
+
+### Version 9.6 @ 2022.03.24
+
+#### 编译修复
+Android：更新悬浮窗功能调用接口，`FloatCallView.java`和`BaseCallActivity.java`类中 ，`TXCGLSurfaceView`不再支持调用，变更为 `TextureView`
+
+
+### Version 9.5 @ 2022.03.07
+
+#### 功能新增
+
+- Android & iOS：增加悬浮窗功能
+
+#### 问题修复
+
+- Android：本地及网络铃声播放异常问题；
+ 
+#### 功能优化
+
+- Android：优化代码结构，主要包含以下变动
+
+  - 将BrandUtil和PermissionUtil迁移至com.tencent.liteav.trtccalling.model.utils下；
+  - 将TRTCCallAudioActivity和TRTCCallVideoActivity合并为BaseCallActivity；
+  
+- iOS：优化设置铃声功能，支持在线资源。
+
 ### Version 9.5 @ 2022.01.24
 
 #### 功能新增
