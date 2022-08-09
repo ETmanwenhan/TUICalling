@@ -202,12 +202,12 @@ typedef NS_ENUM(NSUInteger, TUICallingUserRemoveReason) {
                                                  selector:@selector(appWillEnterForeground)
                                                      name:UIApplicationWillEnterForegroundNotification object:nil];
     }
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(loginSuccessNotification)
-                                                 name:TUILoginSuccessNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(logoutSuccessNotification)
-                                                 name:TUILogoutSuccessNotification object:nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self
+//                                             selector:@selector(loginSuccessNotification)
+//                                                 name:TUILoginSuccessNotification object:nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self
+//                                             selector:@selector(logoutSuccessNotification)
+//                                                 name:TUILogoutSuccessNotification object:nil];
 }
 
 - (void)appWillEnterForeground {
@@ -218,7 +218,7 @@ typedef NS_ENUM(NSUInteger, TUICallingUserRemoveReason) {
 }
 
 - (void)loginSuccessNotification {
-    [[TRTCCalling shareInstance] addDelegate:self];
+//    [[TRTCCalling shareInstance] addDelegate:self];
 }
 
 - (void)logoutSuccessNotification {
