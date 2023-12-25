@@ -1,13 +1,32 @@
 //
 //  AppDelegate.swift
-//  TRTCCalling
+//  TUICallKitApp
 //
 //  Created by adams on 2021/5/7.
+//  Copyright © 2021 Tencent. All rights reserved.
 //
 
 import UIKit
-import TUICalling
 import UserNotifications
+import ImSDK_Plus
+
+/// 若使用 TUICallKit_Swift,  需要设置预编译宏， 设置方法如下：
+///   1. 选中 target ---> Build Settings ---> 搜索 Swift Compiler - Custom Flags
+///   2. 展开 “Other Swift Flags” 设置 “USE_TUICALLKIT_SWIFT”，需要这样写：“-D” 、“TEST”，填完后是 “-D” 和 “USE_TUICALLKIT_SWIFT” 分成两行的，
+#if USE_TUICALLKIT_SWIFT
+import TUICallKit_Swift
+#else
+import TUICallKit
+#endif
+
+/// 若使用 TXLiteAVSDK_Professional,  需要设置预编译宏， 设置方法如下：
+///   1. 选中 target ---> Build Settings ---> 搜索 Swift Compiler - Custom Flags
+///   2. 展开 “Other Swift Flags” 设置 “USE_PRODESSIONAL”，需要这样写：“-D” 、“TEST”，填完后是 “-D” 和 “USE_PRODESSIONAL” 分成两行的，
+#if USE_PRODESSIONAL
+import TXLiteAVSDK_Professional
+#else
+import TXLiteAVSDK_TRTC
+#endif
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -34,7 +53,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     // MARK: UISceneSession Lifecycle
-    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+    func application(_ application: UIApplication,
+                     configurationForConnecting connectingSceneSession: UISceneSession,
+                     options: UIScene.ConnectionOptions) -> UISceneConfiguration {
         // Called when a new scene session is being created.
         // Use this method to select a configuration to create the new scene with.
         return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
@@ -42,14 +63,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
         // Called when the user discards a scene session.
-        // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
+        // If any sessions were discarded while the application was not running,
+        // this will be called shortly after application:didFinishLaunchingWithOptions.
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
     
-    func showMainViewController() {
-        let mainViewController = MainViewController.init()
-        let rootVC = UINavigationController.init(rootViewController: mainViewController)
-        
+    func showMainController() {
+        let mainViewController = MainViewController()
+        let rootVC = UINavigationController(rootViewController: mainViewController)
+
         if let keyWindow = SceneDelegate.getKeyWindow() {
             keyWindow.rootViewController = rootVC
             keyWindow.makeKeyAndVisible()
@@ -59,7 +81,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func showLoginViewController() {
-        let loginVC = TRTCLoginViewController.init()
+        let loginVC = LoginViewController()
         let nav = UINavigationController(rootViewController: loginVC)
         
         if let keyWindow = SceneDelegate.getKeyWindow() {
@@ -102,7 +124,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     // MARK: 当用户点击通知时，会触发
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                didReceive response: UNNotificationResponse,
+                                withCompletionHandler completionHandler: @escaping () -> Void) {
         completionHandler()
     }
     
@@ -128,8 +152,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 
 extension AppDelegate: V2TIMConversationListener {
+    // 会话未读总数变更通知, 可以在此处自定义处理逻辑
     func onTotalUnreadMessageCountChanged(_ totalUnreadCount: UInt64) {
-        // 会话未读总数变更通知, 可以在此处自定义处理逻辑
     }
 }
 

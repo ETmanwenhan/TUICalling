@@ -1,8 +1,8 @@
 # Quick Run of TUICalling Demo for iOS
 
-_[中文](README.md) | English_
+_[简体中文](README.md) | English_
 
-This document describes how to quickly run the TUICalling demo project to make a high-quality audio/video call. For more information on the TUICalling component connection process, see **[Integrating TUICalling (iOS)](https://cloud.tencent.com/document/product/647/42044)**.
+This document describes how to quickly run the TUICalling demo project to make a high-quality audio/video call. For more information on the TUICalling component connection process, see **[Integrating TUICalling (iOS)](https://www.tencentcloud.com/document/product/647/36065)**.
 
 ## Directory Structure
 
@@ -14,7 +14,8 @@ TUICalling
     ├─ LoginMock        // Folder of the login UI and business logic code
     └─ TXAppBasic       // Dependent basic components of the project
 ├─ Resources            // Folder of images and internationalization string resources required by the audio/video call feature
-├─ Source               // Folder of the core business logic code of audio/video call
+├─ TUICallKit           // Folder of the core business logic code of audio/video call(Objective-C)
+├─ TUICallKit-Swift     // Folder of the core business logic code of audio/video call（Swift）
 ```
 
 ## Environment Requirements
@@ -32,7 +33,7 @@ TUICalling
 3. On the application information page, note down the `SDKAppID` and key as shown below:
     <img src="https://qcloudimg.tencent-cloud.cn/raw/bea06852e22a33c77cb41d287cac25db.png" width="900">
 
->! This feature uses two basic PaaS services of Tencent Cloud: [TRTC](https://cloud.tencent.com/document/product/647/16788) and [IM](https://cloud.tencent.com/document/product/269). When you activate TRTC, IM will be activated automatically. IM is a value-added service. See [Pricing](https://cloud.tencent.com/document/product/269/11673) for its billing details.
+>! This feature uses two basic PaaS services of Tencent Cloud: [TRTC](https://www.tencentcloud.com/document/product/647/35078) and [IM](https://www.tencentcloud.com/document/product/1047/33513). When you activate TRTC, IM will be activated automatically. IM is a value-added service.
 
 [](id:ui.step2)
 ### Step 2. Configure the project
@@ -61,14 +62,15 @@ Note: You need to prepare at least two devices to try out the call feature of TU
 - Step 2: Enter the different scenario pages, such as video call, based on your scenario and requirements.
 - Step 3: Enter `userId` of user B to be called, click **Search**, and click **Call**.
 
-| Step 1 | Step 2 | Step 3 | 
-|---------|---------|---------|
-|<img src="https://qcloudimg.tencent-cloud.cn/raw/ab18c3dee2fa825b14ff19fc727a161b.png" width="240"/>|<img src="https://qcloudimg.tencent-cloud.cn/raw/011897b6601bac5ba27641a9b120647a.png" width="240">|<img src="https://liteav.sdk.qcloud.com/doc/res/trtc/picture/zh-cn/tuicalling_user.png" width="240"/>
-
 **Device B (userId: 222)**
 
 - Step 1: On the welcome page, enter the username (<font color=red>which must be unique</font>), such as `222`.
 - Step 2: Enter the homepage and wait for the call.
+
+## Switch to Swift version
+Starting from version 1.6.0, TUICallKit began to support the Swift version. The specific usage method is as follows:
+1. Open ‘Example/Podfile’，Replace ‘pod 'TUICallKit', :path => "../", :subspecs => ["TRTC"]’ with ‘pod 'TUICallKit_Swift', :path => "../TUICallKit_Swift.podspec", :subspecs => ["TRTC"]’
+2. Open Example Project, Replace all ‘import TUICallKit’ with ‘import TUICallKit_Swift’
 
 ## FAQs
 
@@ -83,4 +85,10 @@ You can delete the `Push Notifications` feature as shown below:
 
 ![](https://qcloudimg.tencent-cloud.cn/raw/800bfcdc73e1927e24b5419f09ecef7a.png)
 
->? For more information, see [FAQs About TUI Scenario-Specific Solution](https://cloud.tencent.com/developer/article/1952880). If you have any questions or feedback, feel free to [contact us](https://intl.cloud.tencent.com/contact-us).
+
+## Have any questions?
+Welcome to join our Telegram Group to communicate with our professional engineers! We are more than happy to hear from you~
+Click to join: https://t.me/+EPk6TMZEZMM5OGY1
+Or scan the QR code
+
+<img src="https://qcloudimg.tencent-cloud.cn/raw/9c67ed5746575e256b81ce5a60216c5a.jpg" width="320"/>

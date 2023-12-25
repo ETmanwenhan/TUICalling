@@ -1,21 +1,21 @@
 apply plugin: 'com.android.application'
+
 // TUIOfflinePush: delete it without Google(FCM) or Huawei offline push function
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.huawei.agconnect'
 
 android {
     compileSdkVersion 28
-    buildToolsVersion "28.0.3"
+    namespace "com.tencent.qcloud.tuikit.tuicallkit.demo"
 
     defaultConfig {
         applicationId "com.tencent.trtc"
         versionName "1.0"
         versionCode 1
-        minSdkVersion 17
+        minSdkVersion 19
         targetSdkVersion 26
         multiDexEnabled true
         ndk {
-            //可以根据需要来自行选择并添加对应cpu类型的.so库。
             abiFilters 'armeabi-v7a', 'arm64-v8a'
         }
 
@@ -25,26 +25,44 @@ android {
         *
         *  "VIVO_APPKEY" : ViVo application AppKey registered in the ViVo platform.
         *  "VIVO_APPID" : ViVo application AppId registered in the ViVo platform.
+        *  "HONOR_APPID" : Honor application AppId registered in the Honor platform.
         */
         manifestPlaceholders = [
-                "VIVO_APPKEY": "",
-                "VIVO_APPID" : ""
+                "VIVO_APPKEY": "PLACEHOLDER",
+                "VIVO_APPID" : "PLACEHOLDER",
+                "HONOR_APPID": "PLACEHOLDER"
         ]
-
     }
 
+    signingConfigs {
+        release {
+            storeFile file('tuicallkit.jks')
+            storePassword 'tencent'
+            keyAlias 'tuicallkit'
+            keyPassword 'tencent'
+        }
+    }
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
 dependencies {
     api fileTree(dir: 'libs', include: ['*.jar'])
-    api project(":tuicalling")
-    api project(':debug')
+    api project(":tuicallkit-kt")
     api project(':tuiofflinepush')
-    implementation "androidx.recyclerview:recyclerview:1.0.0"
+    api project(':debug')
+    implementation "androidx.recyclerview:recyclerview:1.2.1"
+    implementation 'androidx.multidex:multidex:2.0.1'
+
+    // Optional, if you use support library fragments:
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 }

@@ -1,38 +1,50 @@
-# TUICalling iOS 示例工程快速跑通
+# TUICallKit iOS 示例工程快速跑通
 
-_中文 | [English](README.en.md)_
+_简体中文 | [English](README.en.md)_
 
-本文档主要介绍如何快速跑通TUICalling 示例工程，体验高质量视频/语音通话，更详细的TUICalling组件接入流程，请点击腾讯云官网文档： [**TUICalling 组件 iOS 接入说明** ](https://cloud.tencent.com/document/product/647/42044)...
+本文档主要介绍如何快速跑通TUICallKit 示例工程，体验高质量视频/语音通话，更详细的TUICallKit组件接入流程，请点击腾讯云官网文档： [**TUICallKit 组件 iOS 接入说明** ](https://cloud.tencent.com/document/product/647/42044)...
 
 ## 目录结构
 
 ```
-TUICalling
+TUICallKit
 ├─ Example              // 视频/语音通话Demo工程
     ├─ App              // 视频/语音通话主页UI代码以及用到的图片及国际化字符串资源文件夹
     ├─ Debug            // 工程调试运行所需的关键业务代码文件夹
     ├─ LoginMock        // 登录UI及业务逻辑代码文件夹
     └─ TXAppBasic       // 工程依赖的基础组件
 ├─ Resources            // 视频/语音通话功能所需的图片、国际化字符串资源文件夹
-├─ Source               // 视频/语音通话核心业务逻辑代码文件夹
+├─ TUICallKit           // 视频/语音通话核心业务逻辑代码文件夹(Objective-C)
+├─ TUICallKit-Swift     // 视频/语音通话核心业务逻辑代码文件夹(Swift)
 ```
 
 ## 环境准备
-- Xcode 11.0及以上版本
-- 最低支持系统：iOS 13.0
-- 请确保您的项目已设置有效的开发者签名
+
+iOS 9.0 (API level 16) 及更高。
 
 ## 运行并体验 App
 
 [](id:ui.step1)
 ### 第一步：创建TRTC的应用
-1. 一键进入腾讯云实时音视频控制台的[应用管理](https://console.cloud.tencent.com/trtc/app)界面，选择创建应用，输入应用名称，例如 `TUIKitDemo` ，单击 **创建**；
-2. 点击对应应用条目后的**应用信息**，具体位置如下图所示：
-    <img src="https://qcloudimg.tencent-cloud.cn/raw/62f58d310dde3de2d765e9a460b8676a.png" width="900">
-3. 进入应用信息后，按下图操作，记录SDKAppID和密钥：
-    <img src="https://qcloudimg.tencent-cloud.cn/raw/bea06852e22a33c77cb41d287cac25db.png" width="900">
 
->! 本功能同时使用了腾讯云 [实时音视频 TRTC](https://cloud.tencent.com/document/product/647/16788) 和 [即时通信 IM](https://cloud.tencent.com/document/product/269) 两个基础 PaaS 服务，开通实时音视频后会同步开通即时通信 IM 服务。 即时通信 IM 属于增值服务，详细计费规则请参见 [即时通信 IM 价格说明](https://cloud.tencent.com/document/product/269/11673)。
+TUICallKit 是基于腾讯云 [即时通信 IM](https://cloud.tencent.com/document/product/269/42440) 和 [实时音视频 TRTC](https://cloud.tencent.com/document/product/647/16788) 两项付费 PaaS 服务构建出的音视频通信组件。您可以按照如下步骤开通相关的服务并体验 7 天的免费试用服务
+
+1. 登录到 [即时通信 IM 控制台](https://console.cloud.tencent.com/im)，单击**创建新应用**，在弹出的对话框中输入您的应用名称，并单击**确定**。
+<img width="640" src="https://qcloudimg.tencent-cloud.cn/raw/1105c3c339be4f71d72800fe2839b113.png">
+2. 点击刚刚创建出的应用，进入**基本配置**页面，并在页面的右下角找到**开通腾讯实时音视频服务**功能区，单击**免费体验**即可开通 TUICallKit 的 7 天免费试用服务。
+<img width="640" src="https://qcloudimg.tencent-cloud.cn/raw/667633f7addfd0c589bb086b1fc17d30.png">
+
+3. 进入应用信息后，按下图操作，记录SDKAppID和密钥：
+<img width="640" src="https://qcloudimg.tencent-cloud.cn/raw/e435332cda8d9ec7fea21bd95f7a0cba.png">
+
+> **注意**：
+> 单击 **免费体验** 以后，部分之前使用过 [实时音视频 TRTC](https://cloud.tencent.com/document/product/647/16788) 服务的用户会提示：
+> ```java
+> [-100013]:TRTC service is  suspended. Please check if the package balance is 0 or the Tencent Cloud accountis in arrears
+> ```
+> 因为新的 IM 音视频通话能力是整合了腾讯云 [实时音视频 TRTC](https://cloud.tencent.com/document/product/647/16788) 和 [即时通信 IM](https://cloud.tencent.com/document/product/269/42440) 两个基础的 PaaS 服务，所以当 [实时音视频 TRTC](https://cloud.tencent.com/document/product/647/16788) 的免费额度（10000分钟）已经过期或者耗尽，就会导致开通此项服务失败，这里您可以单击 [TRTC 控制台](https://console.cloud.tencent.com/trtc/app)，找到对应 SDKAppID 的应用管理页，示例如图，开通后付费功能后，再次 **启用应用** 即可正常体验音视频通话能力。
+> <img width=800px src="https://qcloudimg.tencent-cloud.cn/raw/f74a13a7170cf8894195a1cae6c2f153.png" />
+
 
 [](id:ui.step2)
 ### 第二步：配置工程
@@ -48,12 +60,12 @@ TUICalling
 ### 第三步：编译运行
 
 1. 打开Terminal（终端）进入到工程目录下执行`pod install`指令，等待完成。
-2. Xcode（11.0及以上的版本）打开源码工程 `TUICalling/Example/TUICallingApp.xcworkspace`，单击 **运行** 即可开始调试本 App。
+2. Xcode（11.0及以上的版本）打开源码工程 `TUICallKit/iOS/Example/TUICallingApp.xcworkspace`，单击 **运行** 即可开始调试本 App。
 
 [](id:ui.step4)
 ### 第四步：示例体验
 
-Tips：TUICalling 通话体验，至少需要两台设备，如果用户A/B分别代表两台不同的设备：
+Tips：TUICallKit 通话体验，至少需要两台设备，如果用户A/B分别代表两台不同的设备：
 
 **设备 A（userId：111）**
 
@@ -63,16 +75,21 @@ Tips：TUICalling 通话体验，至少需要两台设备，如果用户A/B分�
 
 | 步骤1 | 步骤2 | 步骤3 | 
 |---------|---------|---------|
-|<img src="https://qcloudimg.tencent-cloud.cn/raw/ab18c3dee2fa825b14ff19fc727a161b.png" width="240"/>|<img src="https://qcloudimg.tencent-cloud.cn/raw/011897b6601bac5ba27641a9b120647a.png" width="240">|<img src="https://liteav.sdk.qcloud.com/doc/res/trtc/picture/zh-cn/tuicalling_user.png" width="240"/>
+|<img src="https://qcloudimg.tencent-cloud.cn/raw/ab18c3dee2fa825b14ff19fc727a161b.png" width="240"/>|<img src="https://qcloudimg.tencent-cloud.cn/raw/94ce7747260d1ad2b5c9a476feb51b01.png" width="240">|<img src="https://liteav.sdk.qcloud.com/doc/res/trtc/picture/zh-cn/tuicalling_user.png" width="240"/>
 
 **设备 B（userId：222）**
 
 - 步骤 1：在欢迎页，输入用户名(<font color=red>请确保用户名唯一性，不能与其他用户重复</font>)，比如222；
 - 步骤 2：进入主页，等待接听来电即可；
 
+## 切换为Swift版本
+从1.6.0版本开始，TUICallKit开始支持Swift版本，具体使用方式为：
+1. 打开‘Example/Podfile’文件，将 ‘pod 'TUICallKit', :path => "../", :subspecs => ["TRTC"]’ 替换为 ‘pod 'TUICallKit_Swift', :path => "../TUICallKit_Swift.podspec", :subspecs => ["TRTC"]’
+2. 打开Example工程，将所有的‘import TUICallKit’替换为‘import TUICallKit_Swift’
+
 ## 常见问题
 
-### TUICalling Example 已经配置了真机证书，真机调试仍然提示以下错误：
+### TUICallKit Example 已经配置了真机证书，真机调试仍然提示以下错误：
 
 ```
 Provisioning profile "XXXXXX" doesn't support the Push Notifications capability.  
@@ -83,4 +100,4 @@ Provisioning profile "XXXXXX" doesn't include the aps-environment entitlement.
 
 ![](https://qcloudimg.tencent-cloud.cn/raw/800bfcdc73e1927e24b5419f09ecef7a.png)
 
->? 更多帮助信息，详见 [TUI 场景化解决方案常见问题](https://cloud.tencent.com/developer/article/1952880)，欢迎加入 QQ 群：592465424，进行技术交流和反馈~!
+>? 更多帮助信息，详见 [TUICallKit (iOS) 常见问题](https://cloud.tencent.com/document/product/647/78768)，欢迎加入 QQ 群：605115878，进行技术交流和反馈~!

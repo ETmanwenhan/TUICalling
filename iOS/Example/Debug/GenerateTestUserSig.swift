@@ -1,8 +1,9 @@
 //
 //  GenerateTestUserSig.swift
-//  TRTCVoiceRoomApp
+//  TUICallKitApp
 //
 //  Created by abyyxwang on 2021/5/7.
+//  Copyright © 2021 Tencent. All rights reserved.
 //
 
 import Foundation
@@ -29,7 +30,7 @@ let EXPIRETIME: Int = 604_800
  * 计算签名用的加密密钥，获取步骤如下：
  *
  * step1. 进入腾讯云云通信[控制台](https://console.cloud.tencent.com/avc) ，如果还没有应用就创建一个，
- * step2. 单击“应用配置”进入基础配置页面，并进一步找到“帐号体系集成”部分。
+ * step2. 单击“应用配置”进入基础配置页面，并进一步找到“账号体系集成”部分。
  * step3. 点击“查看密钥”按钮，就可以看到计算 UserSig 使用的加密的密钥了，请将其拷贝并复制到如下的变量中
  *
  * 注意：该方案仅适用于调试Demo，正式上线前请将 UserSig 计算代码和密钥迁移到您的后台服务器上，以避免加密密钥泄露导致的流量盗用。
@@ -47,13 +48,13 @@ class GenerateTestUserSig {
             "TLS.identifier": identifier,
             "TLS.sdkappid": SDKAPPID,
             "TLS.expire": EXPIRETIME,
-            "TLS.time": TLSTime
+            "TLS.time": TLSTime,
         ]
         let keyOrder = [
             "TLS.identifier",
             "TLS.sdkappid",
             "TLS.time",
-            "TLS.expire"
+            "TLS.expire",
         ]
         var stringToSign = ""
         keyOrder.forEach { (key) in
@@ -62,13 +63,12 @@ class GenerateTestUserSig {
             }
         }
         print("string to sign: \(stringToSign)")
-        let sig = hmac(stringToSign)
-        obj["TLS.sig"] = sig!
+        guard let sig = hmac(stringToSign) else {return ""}
+        obj["TLS.sig"] = sig
         print("sig: \(String(describing: sig))")
         guard let jsonData = try? JSONSerialization.data(withJSONObject: obj, options: .sortedKeys) else { return "" }
-        
-        let bytes = jsonData.withUnsafeBytes { (result) -> UnsafePointer<Bytef> in
-            return result.bindMemory(to: Bytef.self).baseAddress!
+        let bytes = jsonData.withUnsafeBytes { (result) -> UnsafePointer<Bytef>? in
+            return result.bindMemory(to: Bytef.self).baseAddress
         }
         let srcLen: uLongf = uLongf(jsonData.count)
         let upperBound: uLong = compressBound(srcLen)
@@ -82,7 +82,7 @@ class GenerateTestUserSig {
             return ""
         }
         let count = Int(destLen)
-        let result = self.base64URL(data: Data.init(bytesNoCopy: dest, count: count, deallocator: .free))
+        let result = self.base64URL(data: Data(bytesNoCopy: dest, count: count, deallocator: .free))
         return result
     }
     
@@ -93,17 +93,21 @@ class GenerateTestUserSig {
         let cKeyLen = SECRETKEY.lengthOfBytes(using: .ascii)
         let cDataLen = plainText.lengthOfBytes(using: .ascii)
         
-        var cHMAC = [CUnsignedChar].init(repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
+        var cHMAC = [CUnsignedChar](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
         let pointer = cHMAC.withUnsafeMutableBufferPointer { (unsafeBufferPointer) in
             return unsafeBufferPointer
         }
-        CCHmac(CCHmacAlgorithm(kCCHmacAlgSHA256), cKey!, cKeyLen, cData, cDataLen, pointer.baseAddress)
-        let data = Data.init(bytes: pointer.baseAddress!, count: cHMAC.count)
+        
+        guard let baseAddress = pointer.baseAddress else {
+            return nil
+        }
+        CCHmac(CCHmacAlgorithm(kCCHmacAlgSHA256), cKey, cKeyLen, cData, cDataLen, baseAddress)
+        let data = Data(bytes: baseAddress, count: cHMAC.count)
         return data.base64EncodedString(options: [])
     }
     
     class func base64URL(data: Data) -> String {
-        let result = data.base64EncodedString(options: Data.Base64EncodingOptions.init(rawValue: 0))
+        let result = data.base64EncodedString(options: Data.Base64EncodingOptions(rawValue: 0))
         var final = ""
         result.forEach { (char) in
             switch char {

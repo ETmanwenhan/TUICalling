@@ -1,224 +1,85 @@
-# Quick Run of TUICalling Demo for web
+<h1 align="center"> TUICallKit </h1>
 
-_[中文](README.md) | English_
+<p align="center"> 
+<b> English </b> | <a href="https://github.com/tencentyun/TUICallKit/blob/main/Web/README.md"> 简体中文 </a>
+</p>
 
-This document describes how to quickly run the TRTCCalling demo for web, which contains the audio call and video call scenarios:
+<p align="center">  A Vue2 & Vue3 Voice & Video Calling UI Component, easily add calling capabilities to  your web application.Vue2 version <a href="https://www.npmjs.com/package/@tencentcloud/call-uikit-vue2"> @tencentcloud/call-uikit-vue2 </a></p>
 
-\- Audio call: Refers to audio-only interaction and supports multi-person interactive audio chat.
+<div align="center">
+<img src="https://img.shields.io/npm/v/@tencentcloud/call-uikit-vue">
+<img src="https://img.shields.io/badge/Vue-%5E3.0.0-brightgreen">
+<img src="https://img.shields.io/badge/support-docs%20%26%20demos-yellow">
+<img src="https://img.shields.io/npm/l/@tencentcloud/call-uikit-vue">
+<!-- https://shields.io/category/version  - tag: docs/demos, H5, v1.0.3(changelog), 
+GitHub Release Date: -->
+</div>
 
-\- Video call: Refers to video call used in video communication scenarios such as online customer service.
+<img src="https://user-images.githubusercontent.com/57169560/205650396-476e0e20-42a3-493a-8e90-6f7ba50da83e.gif" style="width: 1000px; margin: 10px;" align="center">
 
-### Environment requirements
-* Use the latest version of Chrome.
-* TRTCCalling uses the following ports and domain name for data transfer, which should be added to the allowlist of the firewall. After configuration, please use [Official Demo](https://web.sdk.qcloud.com/component/trtccalling/demo/web/latest/index.html) to check whether the ports work.
-  - TCP port: 8687
-  - UDP ports: 8000, 8080, 8800, 843, 443, 16285
-  - Domain name: qcloud.rtc.qq.com
+## Features
 
-> 
->- Normally, the demo needs to be deployed on the server and then accessed through `https://domain/xxx`. You can also build a server locally and access the demo through `localhost:port`.
-> - Currently, the desktop version of Chrome offers better support for the features of TRTC SDK for desktop browsers; therefore, Chrome is recommended for the demo.
+- ⚡️ Supports C2C/Group/Voice/Video calls, switch calling type, select calling devices
+- 🌟 3 lines of code to run through the test demo, 6 lines of code to complete the common ability to access
+- 📱 Multi-device adaptation, support H5 webview
+- 🛠 Ecology system, works with [TUIKit](https://www.tencentcloud.com/document/product/1047/50061) to initiate audio/video calls directly in [TIM](https://www.tencentcloud.com/document/product/1047/33513) sessions
+- 🔥 Out-of-the-box TypeScript support, support for Vue3 `Composition API`
+- 🌍 Cross-platform, support for Android, iOS, Web, applets, Flutter, uniapp, etc. [multiple development platforms](https://www.tencentcloud.com/document/product/647/35078)
+- ☁️ Deploy on Tencent Cloud, end-to-end average latency < 300ms on international links
+- 🤙🏻 Low lag, anti-packet loss rate over 80%, anti-network jitter over 1000ms, still smooth and stable in weak network environment
+- 🌈 High calling quality, support 720P, 1080P HD quality, 70% packet loss can still running
 
-### Prerequisites
+## How to use
 
-You have [signed up for a Tencent Cloud account](https://intl.cloud.tencent.com/document/product/378/17985) and completed [identity verification](https://intl.cloud.tencent.com/document/product/378/3629).
+This is a documentation for the TUICallKit project. It provides instructions for using and integrating TUICallKit into your website or application.
 
-### Using demo UI
+Here are a few guidelines for using this component.
 
-<span id="step1"></span>
+- Click [here](https://tcms-demo.tencentcloud.com/exp-center/index.html#/detail?scene=callkit) to try out 1v1 Voice and Video Call online.
 
-#### Step 1. Create an application
+- If you want to experience it in your dev mode, please read [Run the Vue3 Demo](https://github.com/tencentyun/TUICallKit/blob/main/Web/demos/basic-vue3/README.en.md) or [Run the Vue2 Demo](https://github.com/tencentyun/TUICallKit/blob/main/Web/demos/basic-vue2/README.en.md)
 
-1. Log in to the TRTC console and select **Development Assistance** > **[Demo Quick Run](https://console.cloud.tencent.com/trtc/quickstart)**.
+- If you want to install this component into your project, please read [TUICallKit Getting Started](https://www.tencentcloud.com/document/product/647/50993)
 
-2. Click **Start Now**, enter an application name such as `TestTRTC`, and click **Create Application**.
+- If you want to modify the CSS Style, please read [UI Customization](https://www.tencentcloud.com/document/product/647/50997)
 
-<span id="step2"></span>
+## Contents
 
-#### Step 2. Download the SDK and demo source code
-2. Hover over the block of the platform you use, click **[GitHub](https://github.com/tencentyun/TRTCSDK/tree/master/Web/TRTCScenesDemo/trtc-calling-web)** (or **[ZIP](https://web.sdk.qcloud.com/trtc/webrtc/download/webrtc_latest.zip)**) to download the SDK and demo source code.
- ![](https://main.qcloudimg.com/raw/0f35fe3bafe9fcdbd7cc73f991984d1a.png)
-2. After the download, return to the TRTC console and click **Downloaded and Next** to view your `SDKAppID` and key.
-
-<span id="step3"></span>
-
-#### Step 3. Configure demo project files
-
-1. Decompress the source package downloaded in [step 2](#step2).
-
-2. Find and open the `Web/TRTCScenesDemo/TRTCCalling/public/debug/GenerateTestUserSig.js` file.
-
-3. Set parameters in the `GenerateTestUserSig.js` file:
-
-  <ul><li>SDKAPPID: `0` by default. Set it to the actual `SDKAppID`.</li>
-
-  <li>SECRETKEY: Left empty by default. Set it to the actual key.</li></ul> 
-
-  <img src="https://main.qcloudimg.com/raw/0ae7a197ad22784384f1b6e111eabb22.png">
-
-4. Return to the TRTC console and click **Next**.
-
-5. Click **Return to Overview Page**.
-
->In this document, the method to obtain UserSig is to configure a SECRETKEY in the client code. In this method, the SECRETKEY is vulnerable to decompilation and reverse engineering. Once your SECRETKEY is leaked, attackers can steal your Tencent Cloud traffic. Therefore, ****this method is only suitable for locally running a demo project and feature debugging****.
-
->The correct `UserSig` distribution method is to integrate the calculation code of `UserSig` into your server and provide an application-oriented API. When `UserSig` is needed, your application can send a request to the business server for a dynamic `UserSig`. For more information, see [How do I calculate `UserSig` during production?](https://intl.cloud.tencent.com/document/product/647/35166).
-
-#### Step 4. Run the demo
->- Sync the dependency: npm install
->- Start the project: npm run serve
->- Visit `http://localhost:8080/` in the browser.
-
-- On the demo landing page:
-![](https://main.qcloudimg.com/raw/90118deded971621db7bb14b55073bcc.png)
-- Enter your user ID and click **Log In**.
-![](https://main.qcloudimg.com/raw/f430fb067cddbb52ba32e4d0660cd331.png)
-- Enter the user ID of the callee to start a video call.
-![](https://main.qcloudimg.com/raw/66562b4c14690de4eb6f2da58ee6f4df.png)
-- Video call
-![](https://main.qcloudimg.com/raw/592189d0f18c91c51cdf7184853c6437.png)
-
-
-### Customizing your own UI
-#### Step 1. Integrate the SDK
-Integration via npm
-> Since version 0.6.0, you need to manually install dependencies [trtc-js-sdk](https://www.npmjs.com/package/trtc-js-sdk), [tim-js-sdk](https://www.npmjs.com/package/tim-js-sdk), and [tsignaling](https://www.npmjs.com/package/tsignaling).
->- To reduce the size of trtc-calling-js.js, and prevent version conflict between trtc-calling-js.js and the already in use trtc-js-sdk, tim-js-sdk or tsignaling, which may stop the latter three from being packaged into the former, you need to manually install the dependencies before use.
-```javascript
-  npm i trtc-js-sdk --save
-  npm i tim-js-sdk --save
-  npm i tsignaling --save
-  npm i trtc-calling-js --save
- 
-  // If you use trtc-calling-js via script, you need to manually import trtc.js first in the specified order.
-  <script src="./trtc.js"></script>
-  
-  // tim-js.js
-  <script src="./tim-js.js"></script>
-  
-  // tsignaling.js
-  <script src="./tsignaling.js"></script>
-
-  // trtc-calling-js.js
-  <script src="./trtc-calling-js.js"></script>
-```
-Import the module into the project script.
-```javascript
-import TRTCCalling from 'trtc-calling-js';
-```
-#### Step 2. Create the `trtcCalling` object
->- sdkAppID: `sdkAppID` assigned by Tencent Cloud
-```javascript
-let options = {
-  SDKAppID: 0 // Replace 0 with the `SDKAppID` of your application when connecting
-};
-const trtcCalling = new TRTCCalling(options);
+```text
+.
+├── README.md
+├── demos/basic-vue3/
+├── demos/basic-vue2/
+└── TUICallKit/
 ```
 
-#### Step 3: Log in to the demo
->- userID: User ID.
->- userSig: User signature. For the calculation method, see [userSig](https://cloud.tencent.com/document/product/647/17275).
-```javascript
-trtcCalling.login({
-  userID,
-  userSig
-});
-```
+**demos/basic-vue3/**
 
-#### Step 4. Make a one-to-one call
->#### Making a call
->- userID: User ID.
->- type: Call type. Valid values: 0: unknown; 1: audio call; 2: video call.
->- timeout: Invitation timeout period in seconds.
-```javascript
-trtcCalling.call({
-  userID,
-  type: 2,
-  timeout
-});
-```
->#### Answering call
->- inviteID: Invitation ID, which identifies an invitation.
->- roomID: Room ID.
->- callType: Valid values: 0: unknown; 1: audio call; 2: video call.
-```javascript
-trtcCalling.accept({
-  inviteID,
-  roomID,
-  callType
-});
-```
->#### Turning on local camera
-```javascript
-trtcCalling.openCamera()
-```
->#### Displaying a remote image
->- userID: Remote user ID.
->- videoViewDomID: The user's data will be rendered in this DOM node.
-```javascript
-trtcCalling.startRemoteView({
-  userID,
-  videoViewDomID
-})
-```
+- The `demos/basic-vue3/` directory contains the Vue3 basic demo of TUICallKit, which is integrated with all the features of the full TUICallKit component.
+- A debug panel is integrated at the bottom of the demo page. You can enter your application information directly, please refer to [Run the Vue3 Demo](https://github.com/tencentyun/TUICallKit/blob/main/Web/demos/basic-vue3/README.en.md).
 
->#### Displaying a local image
->- userID: Local user ID.
->- videoViewDomID: The user's data will be rendered in this DOM node.
-```javascript
-trtcCalling.startLocalView({
-  userID,
-  videoViewDomID
-})
-```
+**demos/basic-vue2/**
 
->#### Hanging up/Rejecting a call
-```javascript
-trtcCalling.hangup()
-```
->- inviteID: Invitation ID, which identifies an invitation.
->- isBusy: Whether the line is busy. Valid values: 0: unknown; 1: audio call; 2: video call
-```javascript
-trtcCalling.reject({ 
-  inviteID,
-  isBusy
-  })
-```
+- The `demos/basic-vue2/` directory contains the Vue2 basic demo of TUICallKit, which is integrated with all the features of the full TUICallKit component.
+- A debug panel is integrated at the bottom of the demo page. You can enter your application information directly, please refer to [Run the Vue2 Demo](https://github.com/tencentyun/TUICallKit/blob/main/Web/demos/basic-vue2/README.en.md).
 
-### Supported platforms
+**TUICallKIt/** 
 
-| OS |      Browser (Desktop)      | Minimum Browser Version Requirement |
-| :------: | :------------------: | :----------------: |
-|  macOS  |     Safari     |        11+         |
-|  macOS  |     Chrome     |        56+         |
-| Windows  |     Chrome     |        56+         |
-| Windows  |   QQ Browser   |        10.4        |
+- The `TUICallKIt` directory contains the source code of TUICallKit. The entry file is `index.ts`.
+- It is recommended to use a packaging method to directly import TUICallKit into your project, as outlined in the [TUICallKit Getting Started](https://www.tencentcloud.com/document/product/647/50993)
+. You can also copy the files directly into your project for component import. For detailed instructions on how to integrate the source code, please refer to the [UI Customization](https://www.tencentcloud.com/document/product/647/50997).
+<!-- - For the changelog of the SDK, see [Release Notes (Web)](https://www.tencentcloud.com/document/product/647/50997). -->
 
-### FAQs
+## Contact Us
 
-#### 1. There is only information of the public and private keys when I try to view the secret key. How do I get the secret key?
-TRTC SDK 6.6 (August 2019) and later versions use the new signature algorithm HMAC-SHA256. If your application was created before August 2019, you need to upgrade the signature algorithm to get a new key. Without upgrading, you can continue to use the old algorithm ECDSA-SHA256. After upgrading, you can switch between the new and old algorithms as needed.
+- If you have questions, see [FAQs](https://www.tencentcloud.com/document/product/647/51024)；
+- To report bugs in our sample code, please create an issue.
+- Communication & Feedback
+Welcome to join our Telegram Group to communicate with our professional engineers! We are more than happy to hear from you~
+Click to join: [https://t.me/+EPk6TMZEZMM5OGY1](https://t.me/+EPk6TMZEZMM5OGY1)
+Or scan the QR code
+  <img src="https://qcloudimg.tencent-cloud.cn/raw/79cbfd13877704ff6e17f30de09002dd.jpg" width="300px">    
 
-Upgrade/Switch:
+## License
 
-1. Log in to the TRTC console.
-
-2. Click **Application Management** on the left sidebar, find your application, and click **Application Info**.
-
-3. Select the **Quick Start** tab and click **Upgrade**, **asymmetric encryption**, or **HMAC-SHA256** in **Step 2: obtain the secret key to issue UserSig**.
-
-- Upgrade
-
-   ![](https://main.qcloudimg.com/raw/69bd0957c99e6a6764368d7f13c6a257.png)
-
-- Switch to the old algorithm ECDSA-SHA256:
-
-   ![](https://main.qcloudimg.com/raw/f89c00f4a98f3493ecc1fe89bea02230.png)
-
-- Switch to the new algorithm HMAC-SHA256:
-
-   ![](https://main.qcloudimg.com/raw/b0412153935704abc9e286868ad8a916.png)
-
-#### 2. What firewall restrictions does the SDK face?
-
-As the SDK uses the UDP protocol for audio/video transmission, it cannot be used in office networks that block UDP. If you encounter such a problem, see [Dealing with Organizational Firewall Restrictions](https://cloud.tencent.com/document/product/647/34399) for assistance.
+ISC License © 2022-present, [Tencent](https://www.tencent.com/)
